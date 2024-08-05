@@ -43,10 +43,11 @@ postconf -e maximal_queue_lifetime=5d
 
 # Restriction lists
 postconf -e smtpd_helo_required=yes
+postconf -e smtpd_helo_restrictions="reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname, reject_rhsbl_helo dbl.spamhaus.org, permit"
 postconf -e smtpd_etrn_restrictions=reject
 postconf -e smtpd_client_restrictions="permit_mynetworks, reject_unknown_client_hostname, reject_unauth_pipelining, permit"
 postconf -e smtpd_sender_restrictions="permit_mynetworks, reject_unknown_sender_domain"
-postconf -e smtpd_recipient_restrictions="reject_invalid_hostname, reject_non_fqdn_hostname, reject_non_fqdn_sender, reject_non_fqdn_recipient, reject_unknown_sender_domain, reject_unknown_recipient_domain, permit_mynetworks, reject_unauth_destination, reject_rbl_client zen.spamhaus.org"
+postconf -e smtpd_recipient_restrictions="permit_mynetworks, reject_unauth_pipelining, reject_non_fqdn_sender, reject_non_fqdn_recipient, reject_unknown_sender_domain, reject_unknown_recipient_domain, reject_rbl_client zen.spamhaus.org, reject_rhsbl_sender dbl.spamhaus.org, reject_rhsbl_recipient dbl.spamhaus.org, reject_unverified_recipient"
 postconf -e smtpd_helo_required=yes
 postconf -e header_checks=regexp:/etc/postfix/header_checks
 postconf -e content_filter=smtp-amavis:[127.0.0.1]:10024
