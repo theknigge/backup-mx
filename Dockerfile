@@ -7,11 +7,7 @@ RUN apk update && \
     apk add --no-cache ca-certificates && \
     apk add --no-cache tzdata && \
     apk add --no-cache supervisor && \
-    apk add --no-cache rsyslog && \
-    apk add --no-cache sed && \
-    apk add --no-cache spamassassin
-RUN sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/spamassassin && \
-    sed -i 's/CRON=0/CRON=1/' /etc/default/spamassassin
+    apk add --no-cache rsyslog
 
 
 COPY supervisord.conf /etc/supervisord.conf
