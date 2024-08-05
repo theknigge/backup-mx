@@ -1,6 +1,6 @@
 FROM alpine
 
-RUN apk add --update --no-cache postfix ca-certificates tzdata supervisor rsyslog spamassassin spamass-milter
+RUN apk add --update --no-cache postfix postfix-pcre ca-certificates tzdata supervisor rsyslog spamassassin spamass-milter
 
 RUN sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/spamassassin && \
     sed -i 's/CRON=0/CRON=1/' /etc/default/spamassassin
