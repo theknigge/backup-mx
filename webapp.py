@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string
+from flask import Flask, render_template, render_template_string
 import subprocess
 
 app = Flask(__name__)
