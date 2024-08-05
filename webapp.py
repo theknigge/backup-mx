@@ -1,7 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, render_template_string
 import subprocess
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 @app.route('/queue', methods=['GET'])
 def get_queue_status():
@@ -12,36 +16,42 @@ def get_queue_status():
         
         # Die Ausgabe aufteilen und verarbeiten
         if not decoded_output:
-            return jsonify({
-                'num_emails': 0,
-                'queue_entries': []
-            }), 200
+            return '''
+            <div class="loading">No emails in the queue.</div>
+            '''
         
         parts = decoded_output.split('\n\n')
         if len(parts) < 2:
-            return jsonify({
-                'num_emails': 0,
-                'queue_entries': decoded_output.split('\n')
-            }), 200
+            return '''
+            <div class="loading">No emails in the queue.</div>
+            '''
 
         queue_entries = parts[1].split('\n')
         num_emails = len(queue_entries) if queue_entries else 0
 
-        # Rückgabe als JSON
-        return jsonify({
-            'num_emails': num_emails,
-            'queue_entries': queue_entries
-        }), 200
+        # HTML Tabelle
+        table_html = '''
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+        '''
+        for entry in queue_entries:
+            table_html += f'<tr><td>{entry}</td><td>Details here</td></tr>'
+        
+        table_html += '''
+            </tbody>
+        </table>
+        '''
+        return table_html
     except subprocess.CalledProcessError as e:
-        return jsonify({
-            'error': 'Failed to fetch queue status',
-            'details': str(e)
-        }), 500
+        return '<p>Error fetching queue status</p>', 500
     except Exception as e:
-        return jsonify({
-            'error': 'An unexpected error occurred',
-            'details': str(e)
-        }), 500
+        return '<p>An unexpected error occurred</p>', 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
