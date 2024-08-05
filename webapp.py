@@ -10,12 +10,10 @@ def parse_mailq_output(output):
     emails = []
     lines = output.decode('utf-8').splitlines()
     
-    # Regex patterns to match queue ID and extract fields
+    # Regex patterns to match queue ID
     mail_id_pattern = re.compile(r'^([0-9A-F]{6,})')
     
     current_mail = None
-    # Status variable to track if we've seen the recipient line
-    seen_recipient = False
 
     for line in lines:
         line = line.strip()
@@ -32,24 +30,12 @@ def parse_mailq_output(output):
             # Start a new email entry
             current_mail = {
                 'id': match.group(1),
-                'recipients': '',
-                'sender': '',
-                'details': []
+                'details': line
             }
-            seen_recipient = False
         
         elif current_mail:
-            # Extract sender and recipient details
-            if not seen_recipient and '@' in line:
-                # The first line with '@' is considered the sender
-                current_mail['sender'] = line
-                seen_recipient = True
-            elif seen_recipient and '@' in line:
-                # Subsequent lines with '@' are considered recipients
-                current_mail['recipients'] = line
-            else:
-                # Collect additional details
-                current_mail['details'].append(line)
+            # Collect additional details
+            current_mail['details'] += '\n' + line
     
     # Append the last email entry
     if current_mail:
@@ -146,8 +132,6 @@ def index():
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Empfänger</th>
-                                    <th>Absender</th>
                                     <th>Details</th>
                                 </tr>
                             </thead>
@@ -157,9 +141,7 @@ def index():
                         data.emails.forEach(email => {
                             tableHtml += `<tr>
                                 <td>${email.id}</td>
-                                <td>${email.recipients}</td>
-                                <td>${email.sender}</td>
-                                <td>${email.details.join('<br>')}</td>
+                                <td><pre>${email.details}</pre></td>
                             </tr>`;
                         });
 
