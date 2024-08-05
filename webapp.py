@@ -1,8 +1,10 @@
-from flask import Flask, jsonify, render_template_string
+from flask import Flask, jsonify, request, render_template_string
 import subprocess
 import re
 
 app = Flask(__name__)
+
+ACCESS_CODE = 'b-mx-24'
 
 def parse_mailq_output(output):
     emails = []
@@ -47,6 +49,10 @@ def get_queue_status():
 
 @app.route('/', methods=['GET'])
 def index():
+    access_code = request.args.get('access_code')
+    if access_code != ACCESS_CODE:
+        return jsonify({'error': 'Unauthorized access'}), 403
+
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
