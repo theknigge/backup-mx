@@ -17,6 +17,10 @@ def parse_mailq_output(output):
             if current_mail:
                 if line.startswith('  '):
                     current_mail['details'].append(line.strip())
+                elif line.startswith('To:'):
+                    current_mail['recipients'] = line[len('To:'):].strip()
+                elif line.startswith('From:'):
+                    current_mail['sender'] = line[len('From:'):].strip()
                 continue
         else:
             match = mail_id_pattern.match(line)
@@ -25,6 +29,8 @@ def parse_mailq_output(output):
                     emails.append(current_mail)
                 current_mail = {
                     'id': match.group(1),
+                    'recipients': '',
+                    'sender': '',
                     'details': []
                 }
 
@@ -122,6 +128,8 @@ def index():
                             <thead>
                                 <tr>
                                     <th>ID</th>
+                                    <th>Empfänger</th>
+                                    <th>Absender</th>
                                     <th>Details</th>
                                 </tr>
                             </thead>
@@ -129,7 +137,12 @@ def index():
                         `;
 
                         data.emails.forEach(email => {
-                            tableHtml += `<tr><td>${email.id}</td><td>${email.details.join('<br>')}</td></tr>`;
+                            tableHtml += `<tr>
+                                <td>${email.id}</td>
+                                <td>${email.recipients}</td>
+                                <td>${email.sender}</td>
+                                <td>${email.details.join('<br>')}</td>
+                            </tr>`;
                         });
 
                         tableHtml += `
