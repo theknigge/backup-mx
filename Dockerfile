@@ -9,7 +9,7 @@ RUN apk update && \
     apk add --no-cache supervisor && \
     apk add --no-cache rsyslog && \
     apk add --no-cache python3 && \
-    apk add --no-cache py3-pip
+    apk add --no-cache py3-flask
 
 # Install Flask
 RUN pip3 install Flask
