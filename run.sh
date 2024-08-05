@@ -42,13 +42,16 @@ postconf -e bounce_queue_lifetime=5d
 postconf -e maximal_queue_lifetime=5d
 
 # Restriction lists
-postconf -e smtpd_client_restrictions=
-postconf -e smtpd_sender_restrictions=
 postconf -e smtpd_helo_required=yes
 postconf -e smtpd_etrn_restrictions=reject
+postconf -e smtpd_client_restrictions="permit_mynetworks, reject_unknown_client_hostname, reject_unauth_pipelining, permit"
+postconf -e smtpd_sender_restrictions="permit_mynetworks, reject_unknown_sender_domain"
+postconf -e smtpd_recipient_restrictions="reject_invalid_hostname, reject_non_fqdn_hostname, reject_non_fqdn_sender, reject_non_fqdn_recipient, reject_unknown_sender_domain, reject_unknown_recipient_domain, permit_mynetworks, reject_unauth_destination, reject_rbl_client zen.spamhaus.org"
+postconf -e smtpd_helo_required=yes
+postconf -e header_checks=regexp:/etc/postfix/header_checks
+postconf -e content_filter=smtp-amavis:[127.0.0.1]:10024
 
-# Add the SpamAssassin service to master.cf
-echo "spamassassin unix - n n - - pipe user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f \${sender} \${recipient}" >> /etc/postfix/master.cf
+
 
 # Start services
 echo -e "‣ Starting: rsyslog, postfix"
