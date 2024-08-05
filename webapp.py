@@ -10,7 +10,7 @@ def parse_mailq_output(output):
     emails = []
     lines = output.decode('utf-8').splitlines()
     
-    # Regex patterns to match queue ID
+    # Regex patterns to match queue ID and extract fields
     mail_id_pattern = re.compile(r'^([0-9A-F]{6,})')
     
     current_mail = None
