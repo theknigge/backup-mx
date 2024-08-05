@@ -14,7 +14,8 @@ def parse_mailq_output(output):
     mail_id_pattern = re.compile(r'^([0-9A-F]{6,})')
     
     current_mail = None
-    sender_found = False
+    # Status variable to track if we've seen the recipient line
+    seen_recipient = False
 
     for line in lines:
         line = line.strip()
@@ -35,16 +36,17 @@ def parse_mailq_output(output):
                 'sender': '',
                 'details': []
             }
-            sender_found = False
+            seen_recipient = False
         
         elif current_mail:
             # Extract sender and recipient details
-            if '@' in line:
-                if not sender_found:
-                    current_mail['sender'] = line
-                    sender_found = True
-                else:
-                    current_mail['recipients'] = line
+            if not seen_recipient and '@' in line:
+                # The first line with '@' is considered the sender
+                current_mail['sender'] = line
+                seen_recipient = True
+            elif seen_recipient and '@' in line:
+                # Subsequent lines with '@' are considered recipients
+                current_mail['recipients'] = line
             else:
                 # Collect additional details
                 current_mail['details'].append(line)
