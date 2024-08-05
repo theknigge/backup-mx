@@ -35,6 +35,11 @@ fi
 
 # Increase the allowed header size, the default (102400) is quite smallish
 postconf -e header_size_limit=4096000
+postconf -e minimal_backoff_time=180s
+postconf -e maximal_backoff_time=1800s
+postconf -e queue_run_delay=300s
+postconf -e bounce_queue_lifetime=5d
+postconf -e maximal_queue_lifetime=5d
 
 # Restriction lists
 postconf -e smtpd_client_restrictions=
