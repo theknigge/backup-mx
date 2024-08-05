@@ -1,16 +1,13 @@
 # https://github.com/bokysan/docker-postfix
-# Check if we need to configure the container timezone
-if [ ! -z "$TZ" ]; then
-    TZ_FILE="/usr/share/zoneinfo/$TZ"
-    if [ -f "$TZ_FILE" ]; then
-        echo -e "‣ Setting container timezone to: $TZ"
-        ln -snf "$TZ_FILE" /etc/localtime
-        echo "$TZ" >/etc/timezone
-    else
-        echo -e "‣ Cannot set timezone to: $TZ -- this timezone does not exist."
-    fi
+
+TZ="Etc/GMT-2"
+TZ_FILE="/usr/share/zoneinfo/$TZ"
+if [ -f "$TZ_FILE" ]; then
+    echo -e "‣ Setting container timezone to: $TZ"
+    ln -snf "$TZ_FILE" /etc/localtime
+    echo "$TZ" >/etc/timezone
 else
-    echo -e "‣ Not setting any timezone for the container"
+    echo -e "‣ Cannot set timezone to: $TZ -- this timezone does not exist."
 fi
 
 # https://samhobbs.co.uk/2016/01/mx-backup-postfix-email-server
