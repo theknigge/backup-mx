@@ -41,11 +41,10 @@ postconf -e smtpd_client_restrictions=
 postconf -e smtpd_sender_restrictions=
 postconf -e smtpd_helo_required=yes
 postconf -e smtpd_helo_restrictions=permit_mynetworks,reject_invalid_helo_hostname,reject_non_fqdn_helo_hostname,reject_unknown_helo_hostname
-postconf -e smtpd_recipient_restrictions=permit_mynetworks, reject_unauth_destination, reject_unknown_recipient_domain, reject_rbl_client zen.spamhaus.org, reject_rbl_client bl.spamcop.net, reject_rbl_client b.barracudacentral.org
-postconf -e smtpd_relay_restrictions=permit_mynetworks,reject_unauth_destination
-
+postconf -e smtpd_recipient_restrictions=permit_mynetworks, reject_unknown_recipient_domain, reject_rbl_client zen.spamhaus.org, reject_rbl_client bl.spamcop.net, reject_rbl_client b.barracudacentral.org
+postconf -e smtpd_relay_restrictions=permit_mynetworks
 postconf -e smtpd_data_restrictions=reject_unauth_pipelining
-postconf -e smtpd_end_of_data_restrictions=check_policy_service unix:private/policy-spf, reject_unauth_pipelining
+postconf -e smtpd_end_of_data_restrictions=check_policy_service,reject_unauth_pipelining
 postconf -e smtpd_etrn_restrictions=reject
 
 # Add the SpamAssassin service to master.cf
