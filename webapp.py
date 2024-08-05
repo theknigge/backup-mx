@@ -7,35 +7,47 @@ app = Flask(__name__)
 ACCESS_CODE = 'b-mx-24'
 
 def parse_mailq_output(output):
-      # Führe den Befehl mailq aus und fange die Ausgabe auf
-        result = subprocess.run(['mailq'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        output = result.stdout
+    emails = []
+    lines = output.decode('utf-8').splitlines()
+    
+    # Regex patterns to match queue ID
+    mail_id_pattern = re.compile(r'^([0-9A-F]{6,})')
+    
+    current_mail = None
+    sender_found = False
 
-        # Verarbeite die Ausgabe
-        lines = output.splitlines()
-        emails = []
-        email = {}
-        for line in lines:
-            if line.startswith('-Queue ID-'):
-                continue  # Überspringe die Kopfzeile
-            if line.strip() == '':
-                if email:
-                    emails.append(email)
-                    email = {}
-                continue
-
-            if email.get('QueueID') is None:
-                email['QueueID'] = line.split()[0]
-                email['Size'] = line.split()[1]
-                email['ArrivalTime'] = ' '.join(line.split()[2:5])
-            elif ' ' in line and line[0] != '(':
-                if 'Sender' not in email:
-                    email['Sender'] = line.strip()
-                else:
-                    email['Recipient'] = line.strip()
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
         
-        if email:
-            emails.append(email)
+        # Check if the line contains a queue ID
+        match = mail_id_pattern.match(line)
+        if match:
+            # Save the previous email details if available
+            if current_mail:
+                emails.append(current_mail)
+
+            # Start a new email entry
+            current_mail = {
+                'id': match.group(1),
+                'recipients': '',
+                'sender': '',
+                'details': []
+            }
+            sender_found = False
+        
+        elif current_mail:
+            # Extract sender and recipient details
+            if '@' in line:
+                if not sender_found:
+                    current_mail['sender'] = line
+                    sender_found = True
+                else:
+                    current_mail['recipients'] = line
+            else:
+                # Collect additional details
+                current_mail['details'].append(line)
     
     # Append the last email entry
     if current_mail:
@@ -171,4 +183,4 @@ def index():
     return render_template_string(html_content)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
