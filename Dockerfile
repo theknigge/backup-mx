@@ -13,6 +13,7 @@ RUN apk update && \
 
 # Copy the code
 COPY webapp.py /app/server.py
+COPY index.html /app/index.html
 COPY supervisord.conf /etc/supervisord.conf
 COPY rsyslog.conf /etc/rsyslog.conf
 COPY run.sh /
