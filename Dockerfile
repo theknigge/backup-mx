@@ -12,7 +12,7 @@ RUN apk update && \
     apk add --no-cache py3-flask
 
 # Copy the code
-COPY server.py /app/server.py
+COPY webapp.py /app/server.py
 COPY supervisord.conf /etc/supervisord.conf
 COPY rsyslog.conf /etc/rsyslog.conf
 COPY run.sh /
