@@ -1,6 +1,6 @@
-from flask import Flask, jsonify, request, render_template_string
 import subprocess
 import re
+from flask import Flask, jsonify, request, render_template_string
 
 app = Flask(__name__)
 
@@ -9,9 +9,10 @@ ACCESS_CODE = 'b-mx-24'
 def parse_mailq_output(output):
     emails = []
     lines = output.decode('utf-8').split('\n')
+    
     mail_id_pattern = re.compile(r'^([0-9A-F]{6,})')
     current_mail = None
-
+    
     for line in lines:
         if line.startswith(' '):
             if current_mail:
@@ -21,7 +22,6 @@ def parse_mailq_output(output):
                     current_mail['recipients'] = line[len('To:'):].strip()
                 elif line.startswith('From:'):
                     current_mail['sender'] = line[len('From:'):].strip()
-                continue
         else:
             match = mail_id_pattern.match(line)
             if match:
@@ -36,7 +36,7 @@ def parse_mailq_output(output):
 
     if current_mail:
         emails.append(current_mail)
-
+    
     return emails
 
 @app.route('/queue', methods=['GET'])
