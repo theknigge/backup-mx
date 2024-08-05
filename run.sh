@@ -43,17 +43,13 @@ postconf -e smtpd_helo_required=yes
 postconf -e smtpd_helo_restrictions=permit_mynetworks,reject_invalid_helo_hostname,reject_non_fqdn_helo_hostname,reject_unknown_helo_hostname
 postconf -e smtpd_recipient_restrictions=
 
-postconf -e smtpd_relay_restrictions=permit_mynetworks,reject_unauth_destination
 postconf -e smtpd_data_restrictions=reject_unauth_pipelining
 postconf -e smtpd_end_of_data_restrictions=check_policy_service unix:private/policy-spf, reject_unauth_pipelining
-postconf -e smtpd_relay_restrictions=permit_mynetworks, reject_unauth_destination
 postconf -e smtpd_etrn_restrictions=reject
-# Configure Postfix to use SpamAssassin
-postconf -e content_filter=spamassassin
 
 # Add the SpamAssassin service to master.cf
 echo "spamassassin unix - n n - - pipe user=spamd argv=/usr/bin/spamc -f -e /usr/sbin/sendmail -oi -f \${sender} \${recipient}" >> /etc/postfix/master.cf
 
 # Start services
-echo -e "‣ Starting: rsyslog, postfix, spamassassin"
+echo -e "‣ Starting: rsyslog, postfix"
 exec supervisord -c /etc/supervisord.conf
