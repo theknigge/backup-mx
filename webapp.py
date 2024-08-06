@@ -6,8 +6,6 @@ from flask import Flask, request, render_template_string, redirect, url_for, jso
 app = Flask(__name__)
 
 ACCESS_CODE = os.environ.get('ACCESS_CODE', 'changeme')
-HOSTNAME = os.environ.get('HOSTNAME')
-DOMAINS = os.environ.get('DOMAINS')
 
 
 # Function to reload Postfix queue
@@ -82,8 +80,6 @@ def index():
             status_message = "Postfix queue reloaded successfully"
         else:
             status_message = "Failed to reload Postfix queue"
-    hostname = HOSTNAME
-    domains = DOMAINS
     
     html_content = """
     <!DOCTYPE html>
@@ -162,8 +158,6 @@ def index():
                     <button type="submit">Process Postfix Queue</button>
                 </form>
             </div>
-            <div>Hostname: {{ hostname }}</div>
-            <div>Domains: {{ domains }}</div>
         </div>
         <script>
             function fetchQueueStatus() {
