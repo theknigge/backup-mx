@@ -72,6 +72,7 @@ def get_queue_status():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    access_code = request.args.get('access_code')
     if access_code != ACCESS_CODE:
         return "Unauthorized access", 403
     
