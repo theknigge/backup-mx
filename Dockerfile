@@ -22,6 +22,13 @@ RUN chmod +x /run.sh
 # Expose necessary ports
 EXPOSE 25 587 5000
 
-USER root
+# Copy healthcheck script
+COPY healthcheck.sh /app/healthcheck.sh
+RUN chmod +x /app/healthcheck.sh
 
+# Configure health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD /app/healthcheck.sh
+
+
+USER root
 CMD ["/bin/sh", "-c", "/run.sh"]
