@@ -82,6 +82,8 @@ def index():
             status_message = "Postfix queue reloaded successfully"
         else:
             status_message = "Failed to reload Postfix queue"
+    hostname = HOSTNAME
+    domains = DOMAINS
     
     html_content = """
     <!DOCTYPE html>
@@ -160,8 +162,8 @@ def index():
                     <button type="submit">Process Postfix Queue</button>
                 </form>
             </div>
-            <div>Hostname: {{ HOSTNAME }}</div>
-            <div>Domains: {{ DOMAINS }}</div>
+            <div>Hostname: {{ hostname }}</div>
+            <div>Domains: {{ domains }}</div>
         </div>
         <script>
             function fetchQueueStatus() {
