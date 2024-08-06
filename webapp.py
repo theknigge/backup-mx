@@ -211,7 +211,7 @@ def index():
     </body>
     </html>
     """
-    return render_template_string(html_content, status_message=status_message, access_code=access_code, hostname=hostname, domains=domains)
+    return render_template_string(html_content, status_message=status_message, access_code=access_code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
