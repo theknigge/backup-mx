@@ -1,5 +1,6 @@
 import subprocess
 import re
+import os
 from flask import Flask, jsonify, request, render_template_string
 
 app = Flask(__name__)
@@ -52,7 +53,7 @@ def parse_mailq_output(output):
     
     return emails
 
-@app.route('/queue', methods=['GET', 'POST'])
+@app.route('/queue', methods=['GET'])
 def get_queue_status():
     try:
         output = subprocess.check_output(['mailq'])
@@ -66,7 +67,7 @@ def get_queue_status():
     except Exception as e:
         return jsonify({'error': 'An unexpected error occurred', 'details': str(e)}), 500
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
     access_code = request.args.get('access_code')
     if access_code != ACCESS_CODE:
