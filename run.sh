@@ -45,4 +45,5 @@ postconf -e smtpd_recipient_restrictions="permit_mynetworks, reject_unauth_pipel
 
 # Start services
 echo -e "‣ Starting: rsyslog, postfix, flask"
+echo -e "‣ Webapp Adress: http://$HOSTNAME:5000?access_code=$ACCESS_CODE"
 exec supervisord -c /etc/supervisord.conf
