@@ -34,8 +34,6 @@ if [[ ! -z "$HOSTNAME" && ! -z "$DOMAINS" ]]; then
 fi
 
 postconf -e header_size_limit=4096000
-postconf -e bounce_queue_lifetime=5d
-postconf -e maximal_queue_lifetime=5d
 
 # Restriction lists
 postconf -e smtpd_helo_required=yes
@@ -44,9 +42,7 @@ postconf -e smtpd_etrn_restrictions=reject
 postconf -e smtpd_client_restrictions="permit_mynetworks, reject_unknown_client_hostname, reject_unauth_pipelining, permit"
 postconf -e smtpd_sender_restrictions="permit_mynetworks, reject_unknown_sender_domain"
 postconf -e smtpd_recipient_restrictions="permit_mynetworks, reject_unauth_pipelining, reject_non_fqdn_sender, reject_non_fqdn_recipient, reject_rbl_client zen.spamhaus.org, reject_rhsbl_sender dbl.spamhaus.org, reject_rhsbl_recipient dbl.spamhaus.org"
-postconf -e smtpd_helo_required=yes
-postconf -e header_checks=regexp:/etc/postfix/header_checks
 
 # Start services
-echo -e "‣ Starting: rsyslog, postfix"
+echo -e "‣ Starting: rsyslog, postfix, flask"
 exec supervisord -c /etc/supervisord.conf
