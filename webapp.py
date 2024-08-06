@@ -1,7 +1,7 @@
 import subprocess
 import re
 import os
-from flask import Flask, request, render_template_string, redirect, url_for
+from flask import Flask, request, render_template_string, redirect, url_for, jsonify
 
 app = Flask(__name__)
 
