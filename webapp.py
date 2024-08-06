@@ -130,6 +130,12 @@ def index():
                 <h1>Postfix Queue Status</h1>
             </div>
             <div id="status" class="loading">Loading...</div>
+            <div class="management">
+                <h3>Postfix Management</h3>
+                <form method="post">
+                    <button type="submit">Process Postfix Queue</button>
+                </form>
+            </div>
         </div>
         <script>
             function fetchQueueStatus() {
