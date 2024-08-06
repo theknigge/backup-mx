@@ -4,7 +4,16 @@ from flask import Flask, jsonify, request, render_template_string
 
 app = Flask(__name__)
 
-ACCESS_CODE = 'b-mx-24'
+ACCESS_CODE = os.environ.get('ACCESS_CODE', 'changeme')
+
+# Function to reload Postfix queue
+def reload_postfix_queue():
+    try:
+        subprocess.run(['postsuper', '-r', 'ALL'], check=True)
+        subprocess.run(['postqueue', '-f'], check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        return False
 
 def parse_mailq_output(output):
     emails = []
@@ -43,7 +52,7 @@ def parse_mailq_output(output):
     
     return emails
 
-@app.route('/queue', methods=['GET'])
+@app.route('/queue', methods=['GET', 'POST'])
 def get_queue_status():
     try:
         output = subprocess.check_output(['mailq'])
@@ -62,7 +71,13 @@ def index():
     access_code = request.args.get('access_code')
     if access_code != ACCESS_CODE:
         return jsonify({'error': 'Unauthorized access'}), 403
-
+    
+    if request.method == 'POST':
+        if reload_postfix_queue():
+            return jsonify({'success': 'Postfix queue reloaded successfully'}), 200
+        else:
+            return jsonify({'error': 'Failed to reload Postfix queue'}), 500
+            
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
