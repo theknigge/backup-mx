@@ -1,7 +1,7 @@
 import subprocess
 import re
 import os
-from flask import Flask, jsonify, request, render_template_string
+from flask import Flask, request, render_template_string, redirect, url_for
 
 app = Flask(__name__)
 
@@ -13,7 +13,7 @@ def reload_postfix_queue():
         subprocess.run(['postsuper', '-r', 'ALL'], check=True)
         subprocess.run(['postqueue', '-f'], check=True)
         return True
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         return False
 
 def parse_mailq_output(output):
@@ -71,14 +71,15 @@ def get_queue_status():
 def index():
     access_code = request.args.get('access_code')
     if access_code != ACCESS_CODE:
-        return jsonify({'error': 'Unauthorized access'}), 403
+        return "Unauthorized access", 403
     
+    status_message = None
     if request.method == 'POST':
         if reload_postfix_queue():
-            return jsonify({'success': 'Postfix queue reloaded successfully'}), 200
+            status_message = "Postfix queue reloaded successfully"
         else:
-            return jsonify({'error': 'Failed to reload Postfix queue'}), 500
-            
+            status_message = "Failed to reload Postfix queue"
+    
     html_content = """
     <!DOCTYPE html>
     <html lang="en">
@@ -123,6 +124,18 @@ def index():
                 font-size: 18px;
                 color: #666;
             }
+            .message {
+                text-align: center;
+                font-size: 18px;
+                color: green;
+                margin-bottom: 20px;
+            }
+            .error {
+                text-align: center;
+                font-size: 18px;
+                color: red;
+                margin-bottom: 20px;
+            }
         </style>
     </head>
     <body>
@@ -130,10 +143,17 @@ def index():
             <div class="header">
                 <h1>Postfix Queue Status</h1>
             </div>
+            {% if status_message %}
+            <div class="message">{{ status_message }}</div>
+            {% endif %}
+            {% if error_message %}
+            <div class="error">{{ error_message }}</div>
+            {% endif %}
             <div id="status" class="loading">Loading...</div>
             <div class="management">
                 <h3>Postfix Management</h3>
                 <form method="post">
+                    <input type="hidden" name="access_code" value="{{ access_code }}">
                     <button type="submit">Process Postfix Queue</button>
                 </form>
             </div>
@@ -186,7 +206,7 @@ def index():
     </body>
     </html>
     """
-    return render_template_string(html_content)
+    return render_template_string(html_content, status_message=status_message, access_code=access_code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
