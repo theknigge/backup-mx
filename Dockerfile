@@ -22,12 +22,8 @@ RUN chmod +x /run.sh
 # Expose necessary ports
 EXPOSE 25 587 5000
 
-# Copy healthcheck script
-COPY healthcheck.sh /app/healthcheck.sh
-RUN chmod +x /app/healthcheck.sh
-
 # Configure health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 CMD /app/healthcheck.sh
+HEALTHCHECK --interval=1m --timeout=10s --start-period=30s --retries=3 CMD netstat -l | grep smtp
 
 
 USER root
