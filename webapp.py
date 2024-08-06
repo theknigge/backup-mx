@@ -6,6 +6,9 @@ from flask import Flask, request, render_template_string, redirect, url_for, jso
 app = Flask(__name__)
 
 ACCESS_CODE = os.environ.get('ACCESS_CODE', 'changeme')
+HOSTNAME = os.environ.get('HOSTNAME')
+DOMAINS = os.environ.get('DOMAINS')
+
 
 # Function to reload Postfix queue
 def reload_postfix_queue():
@@ -69,7 +72,6 @@ def get_queue_status():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    access_code = request.args.get('access_code')
     if access_code != ACCESS_CODE:
         return "Unauthorized access", 403
     
@@ -157,6 +159,8 @@ def index():
                     <button type="submit">Process Postfix Queue</button>
                 </form>
             </div>
+            <div>Hostname: {{ hostname }}</div>
+            <div>Domains: {{ domains }}</div>
         </div>
         <script>
             function fetchQueueStatus() {
@@ -206,7 +210,7 @@ def index():
     </body>
     </html>
     """
-    return render_template_string(html_content, status_message=status_message, access_code=access_code)
+    return render_template_string(html_content, status_message=status_message, access_code=access_code, hostname=hostname, domains=domains)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
