@@ -160,8 +160,8 @@ def index():
                     <button type="submit">Process Postfix Queue</button>
                 </form>
             </div>
-            <div>Hostname: {{ hostname }}</div>
-            <div>Domains: {{ domains }}</div>
+            <div>Hostname: {{ HOSTNAME }}</div>
+            <div>Domains: {{ DOMAINS }}</div>
         </div>
         <script>
             function fetchQueueStatus() {
