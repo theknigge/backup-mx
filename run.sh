@@ -35,6 +35,10 @@ fi
 
 postconf -e header_size_limit=4096000
 
+# Retry-Intervall
+postconf -e 'minimal_backoff_time = 600s'
+postconf -e 'maximal_backoff_time = 2h'
+
 # Restriction lists
 postconf -e smtpd_helo_required=yes
 postconf -e smtpd_helo_restrictions="reject_invalid_hostname, reject_non_fqdn_hostname, reject_unknown_hostname, reject_rhsbl_helo dbl.spamhaus.org, permit"
