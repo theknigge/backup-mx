@@ -36,8 +36,8 @@ fi
 postconf -e header_size_limit=4096000
 
 # Retry-Intervall
-postconf -e 'minimal_backoff_time = 600s'
-postconf -e 'maximal_backoff_time = 2h'
+postconf -e minimal_backoff_time=600s
+postconf -e maximal_backoff_time=2h
 
 # Restriction lists
 postconf -e smtpd_helo_required=yes
