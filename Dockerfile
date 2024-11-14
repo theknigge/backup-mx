@@ -14,6 +14,7 @@ RUN apk update && \
 # Copy the code
 COPY webapp.py /app/server.py
 COPY supervisord.conf /etc/supervisord.conf
+COPY client_access_regex /etc/postfix/client_access_regex
 COPY rsyslog.conf /etc/rsyslog.conf
 COPY run.sh /
 
