@@ -34,6 +34,7 @@ if [[ ! -z "$HOSTNAME" && ! -z "$DOMAINS" ]]; then
 fi
 
 postconf -e header_size_limit=26214400
+postconf -e message_size_limit=26214400
 
 # Retry-Intervall
 postconf -e minimal_backoff_time=600s
