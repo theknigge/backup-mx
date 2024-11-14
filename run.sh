@@ -33,7 +33,7 @@ if [[ ! -z "$HOSTNAME" && ! -z "$DOMAINS" ]]; then
     postconf -e proxy_interfaces=$HOSTNAME
 fi
 
-postconf -e header_size_limit=4096000
+postconf -e header_size_limit=26214400
 
 # Retry-Intervall
 postconf -e minimal_backoff_time=600s
